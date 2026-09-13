@@ -2,20 +2,19 @@
 
 Modern gaming and internet slang, most eloquently spoken.
 
-A tiny Shakespearean phrasebook for gaming, Twitch, Gen-Z slang, insults, and AFK excuses.
+## Run locally
 
-## Features
+```bash
+npm install
+npm run dev
+```
 
-- Search phrases instantly
-- Browse by category
-- Copy translations with one click
-- Random phrase generator
-- Fully static and mobile-friendly
+Then visit `http://localhost:3000`.
 
-## Local use
+## Included
 
-Open `index.html` in a browser. No build step required.
-
-## Deployment
-
-Designed for static hosting, including the planned `yeoldechat.hubzero.in` subdomain.
+- TypeScript and Next.js App Router
+- Search and category filters
+- Random phrase picker
+- One-click clipboard copy with accessible confirmation
+- Responsive, keyboard-friendly interface
