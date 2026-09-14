@@ -1,29 +1,54 @@
-import type { Metadata } from "next";
-import { DM_Mono, Playfair_Display } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { description, siteName, siteUrl, tagline } from "@/lib/site";
 import "./globals.css";
 
-const mono = DM_Mono({
+const sans = Geist({
   subsets: ["latin"],
-  variable: "--font-mono",
-  weight: ["400", "500"],
+  variable: "--font-geist",
 });
 
-const display = Playfair_Display({
+const mono = Geist_Mono({
   subsets: ["latin"],
-  variable: "--font-display",
-  weight: ["600", "700"],
-  style: ["normal", "italic"],
+  variable: "--font-geist-mono",
+});
+
+const serif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-instrument",
 });
 
 export const metadata: Metadata = {
-  title: "Ye Olde Chat | Internet slang, most eloquently spoken",
-  description: "A Shakespearean translator for gaming, Twitch, and internet slang.",
+  metadataBase: new URL(siteUrl),
+  title: `${siteName}: ${tagline}`,
+  description,
+  applicationName: siteName,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName,
+    title: siteName,
+    description: tagline,
+    locale: "en",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteName,
+    description: tagline,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#120e0f",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body className={`${mono.variable} ${display.variable}`}>{children}</body>
+    <html lang="en" className={`${sans.variable} ${mono.variable} ${serif.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }

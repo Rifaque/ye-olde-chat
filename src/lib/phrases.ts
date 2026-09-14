@@ -1,28 +1,66 @@
-export type Phrase = {
-  modern: string;
+import type { ConceptId, ReplyIntent } from "./concepts.ts";
+import { afk } from "./corpus/afk.ts";
+import { argumentsCorpus } from "./corpus/arguments.ts";
+import { discord } from "./corpus/discord.ts";
+import { gaming } from "./corpus/gaming.ts";
+import { internet } from "./corpus/internet.ts";
+import { reactions } from "./corpus/reactions.ts";
+import { twitch } from "./corpus/twitch.ts";
+
+export const categories = [
+  { id: "gaming", label: "Gaming" },
+  { id: "internet", label: "Internet" },
+  { id: "twitch", label: "Twitch" },
+  { id: "arguments", label: "Arguments" },
+  { id: "reactions", label: "Praise" },
+  { id: "discord", label: "Discord" },
+  { id: "afk", label: "AFK & Social" },
+] as const;
+
+export type CategoryId = (typeof categories)[number]["id"];
+
+/** A phrase as written in a corpus file, before its category is attached. */
+export type PhraseEntry = {
+  /** Stable, unique, URL-safe identifier. Used in /p/<id> links and global copy counts, so never rename casually. */
+  id: string;
+  /** The modern slang, as it would be typed in chat. */
+  slang: string;
+  /** The eloquent rendering that gets copied. Always hand-written. */
   translation: string;
-  category: string;
+  /** Other spellings or expansions that should find this phrase as if they were its slang. */
+  aliases?: readonly string[];
+  /** Situation concepts (see concepts.ts) that search and Find a Reply match against. */
+  tags: readonly ConceptId[];
+  /** The kind of reply this phrase makes, for Find a Reply's optional intent filter. */
+  intents?: readonly ReplyIntent[];
+  /** Words or short phrases in someone's message that this phrase answers especially well. */
+  replyTo?: readonly string[];
 };
 
-const byCategory: Record<string, Omit<Phrase, "category">[]> = {
-  Gaming: [
-    ["GG", "A worthy contest, well fought."], ["GG WP", "A fine battle, indeed."], ["EZ", "Victory came most effortlessly."], ["Nice try", "A valiant attempt, good sir."], ["You suck", "Thy talents are most lacking."], ["Skill issue", "Thy shortcomings are entirely thine own."], ["Get good", "Pray, improve thy craft."], ["Noob", "Thou art but a novice in these lands."], ["I'm carrying", "I bear this kingdom alone."], ["Clutch", "A triumph snatched from the jaws of defeat."], ["Throwing", "Thou art delivering victory unto our foes."], ["Report him", "Bring this knave to the council."], ["He's hacking", "Surely dark sorcery is at work here."], ["Defend base", "Guard our sacred stronghold."], ["Push", "Forward, brethren! Press the assault!"], ["Fall back", "Retreat! Preserve thy lives!"], ["Surrender", "Lay down thy arms, warriors."], ["Stop feeding", "Cease thy generous offerings to the enemy."], ["Heal me", "Pray, mend these grievous wounds."], ["I'm low", "My life hangs by the slenderest thread."], ["He's one shot", "A mere breeze shall finish him."], ["Camping", "The coward lurks within his wretched corner."], ["Rage quit", "Thou fleest from thy defeat."], ["I lagged", "My connection hath betrayed me."], ["I'm dead", "Alas, I have departed this mortal realm."], ["Respawn", "I shall presently return from the grave."], ["My bad", "The fault, I confess, is mine."], ["Uninstall", "Perhaps thou shouldst seek another vocation."],
-  ].map(([modern, translation]) => ({ modern, translation })),
-  "Internet & Gen-Z": [
-    ["bro", "My most esteemed companion."], ["fr", "Indeed, I speak the truth."], ["idk", "I confess, I know not."], ["omg", "By the heavens above!"], ["WTF", "What manner of madness is this?"], ["LOL", "Thou hast amused me greatly."], ["LMAO", "I am overcome with mirth."], ["gyatt", "Good gracious, what remarkable proportions."], ["sigma", "A man of remarkable independence."], ["rizz", "A most impressive charm indeed."], ["cooked", "Thy fate appears most unfortunate."], ["Bro is cooked", "My esteemed companion is beyond salvation."], ["We're cooked", "Alas, our fate hath already been sealed."], ["Let him cook", "Stay thy hand. Let the man pursue his craft."], ["sus", "Something most foul is afoot."], ["cap", "Thou speakest falsehoods."], ["no cap", "I swear these words bear no deception."], ["bet", "So be it."], ["based", "Thy conviction commands my respect."], ["cringe", "I recoil from this most dreadful display."], ["mid", "Remarkably ordinary, I must confess."], ["W", "A glorious triumph!"], ["L", "A most lamentable defeat."], ["ratio", "The court hath judged thee most unfavourably."], ["yapping", "Thou hast spoken for far too long."], ["touch grass", "Venture forth and acquaint thyself with nature."],
-  ].map(([modern, translation]) => ({ modern, translation })),
-  Twitch: [
-    ["Pog / PogChamp", "What a most glorious spectacle!"], ["KEKW", "I am overcome with uncontrollable mirth."], ["Copium", "Breathe deeply of thy comforting delusions."], ["Hopium", "I sustain myself upon the promise of unlikely fortune."], ["Malding", "His fury hath consumed both mind and scalp."], ["MonkaS", "A most dreadful unease hath befallen me."], ["PepeHands", "Alas! My sorrow knows no bounds."], ["Sadge", "A melancholy fate, indeed."], ["ResidentSleeper", "Pray awaken me when something of consequence occurs."], ["Kappa", "Surely I speak with complete sincerity..."], ["Clueless", "Blissfully unaware of the calamity that approaches."], ["Aware", "Alas, the terrible truth hath been revealed."], ["W chat", "Rejoice, good people! The assembly hath triumphed!"], ["L chat", "The assembly hath disgraced itself once more."], ["Chat, is this real?", "Good people, doth mine eyes deceive me?"], ["CHAT?!", "GOOD PEOPLE, WHAT MADNESS IS THIS?!"], ["Mods?", "Wardens, I summon thee!"], ["MODS!", "WARDENS! SEIZE THIS KNAVE AT ONCE!"], ["Ban him", "Banish this scoundrel from our realm."], ["Permaban", "Let this knave never again cross our gates."], ["Timeout", "Remove this fool until his senses return."], ["Lurking", "I remain amongst thee, though silent and unseen."], ["Backseating", "Cease thy counsel, for none hath requested it."], ["Clip that", "Preserve this moment for the chronicles!"], ["Someone clip it", "Scribes! Record what hath just transpired!"], ["Raid", "Open the gates! A foreign host approaches!"], ["Stream is scuffed", "This broadcast is held together by prayer alone."], ["F in chat", "Pay thy respects, good people."], ["Spam W", "Flood the halls with symbols of triumph!"], ["He cooked", "By the heavens, the man hath prepared a feast."], ["Never let him cook again", "Remove this man from the kitchens immediately."], ["We are so back", "Rejoice! Our glorious age hath returned!"], ["It's so over", "Alas, all hope hath forsaken us."], ["Absolute cinema", "Behold! A masterpiece worthy of the royal theatre."], ["Peak", "Never hath mankind witnessed greater excellence."], ["NPC", "This fellow appears bound to a most limited script."], ["Streamer luck", "Fortune shamelessly favours this wretch."],
-  ].map(([modern, translation]) => ({ modern, translation })),
-  "Arguments & Insults": [
-    ["You're trash", "Thy competence leaves much to be desired."], ["Who asked?", "Pray tell, who solicited this discourse?"], ["Nobody cares", "Thy proclamation hath stirred not a single soul."], ["Shut up", "I beseech thee, grant us the gift of silence."], ["Cry about it", "Weep, then, if it eases thy troubled heart."], ["nah", "I must respectfully decline."],
-  ].map(([modern, translation]) => ({ modern, translation })),
-  "AFK & Leaving": [
-    ["AFK", "I must briefly depart from this realm."], ["BRB", "Await me, for I shall return shortly."], ["GTG", "Alas, I must now take my leave."], ["It's 3 AM", "Good heavens, the witching hour is upon us."], ["One more game", "One final battle, and then we rest."], ["One more game at 3 AM", "One final battle, I swear it upon my honour."],
-  ].map(([modern, translation]) => ({ modern, translation })),
+export type Phrase = PhraseEntry & { category: CategoryId };
+
+const corpus: Record<CategoryId, readonly PhraseEntry[]> = {
+  gaming,
+  internet,
+  twitch,
+  arguments: argumentsCorpus,
+  reactions,
+  discord,
+  afk,
 };
 
-export const categories = ["All", ...Object.keys(byCategory)];
-export const phrases: Phrase[] = Object.entries(byCategory).flatMap(([category, entries]) =>
-  entries.map((entry) => ({ ...entry, category })),
+export const phrases: readonly Phrase[] = categories.flatMap(({ id }) =>
+  corpus[id].map((entry): Phrase => ({ ...entry, category: id })),
 );
+
+const byId = new Map(phrases.map((phrase) => [phrase.id, phrase]));
+
+export function getPhrase(id: string): Phrase | undefined {
+  return byId.get(id);
+}
+
+export function isPhraseId(id: unknown): id is string {
+  return typeof id === "string" && byId.has(id);
+}
+
+export const categoryLabels = Object.fromEntries(categories.map(({ id, label }) => [id, label])) as Record<CategoryId, string>;
