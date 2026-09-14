@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
-import { description, siteName, siteUrl, tagline } from "@/lib/site";
+import { homeSeo } from "@/lib/seo";
+import { siteName, siteUrl } from "@/lib/site";
 import "./globals.css";
 
 const sans = Geist({
@@ -21,23 +22,10 @@ const serif = Instrument_Serif({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: `${siteName}: ${tagline}`,
-  description,
+  // Each page sets its own canonical URL; none is inherited from here.
+  title: { default: homeSeo.title, template: `%s | ${siteName}` },
+  description: homeSeo.description,
   applicationName: siteName,
-  alternates: { canonical: "/" },
-  openGraph: {
-    type: "website",
-    url: "/",
-    siteName,
-    title: siteName,
-    description: tagline,
-    locale: "en",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: siteName,
-    description: tagline,
-  },
 };
 
 export const viewport: Viewport = {

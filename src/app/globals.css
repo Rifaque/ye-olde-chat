@@ -659,20 +659,105 @@ kbd {
   text-align: center;
 }
 
-/* Phrase pages */
+/* Category and phrase pages */
 
-.phrase-page {
+.phrase-page,
+.category-page {
   padding-bottom: 64px;
 }
 
-.back-link {
-  display: inline-flex;
-  gap: 6px;
-  margin-top: 4px;
+.breadcrumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text-faint);
+  font-size: 13px;
 }
 
-.phrase-page .cards {
+.breadcrumbs li + li::before {
+  content: "/";
+  margin-inline: 8px;
+  color: var(--line-control);
+}
+
+.breadcrumbs a,
+.link-row a,
+.phrase-index a,
+.footer-directory a {
+  border-radius: 3px;
+  color: var(--text-muted);
+  text-decoration: underline;
+  text-decoration-color: var(--line-control);
+  text-underline-offset: 3px;
+}
+
+.breadcrumbs a:hover,
+.link-row a:hover,
+.phrase-index a:hover,
+.footer-directory a:hover {
+  color: var(--text);
+  text-decoration-color: currentColor;
+}
+
+.breadcrumbs [aria-current="page"] {
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.page-head {
+  display: grid;
+  gap: 8px;
+  padding-block: 14px 4px;
+}
+
+.page-title {
+  margin: 0;
+  font: 400 clamp(30px, 4vw, 40px)/1.1 var(--font-serif);
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.page-intro {
+  max-width: 64ch;
+  color: var(--text-muted);
+}
+
+.link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  color: var(--text-faint);
+  font-size: 13px;
+}
+
+.phrase-page .cards,
+.category-page .cards {
   padding-bottom: 0;
+}
+
+.related .link-row {
+  margin-top: 14px;
+}
+
+.status-row-quiet {
+  min-height: 44px;
+}
+
+.phrase-index-section {
+  margin-top: 40px;
+}
+
+.phrase-index {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 180px), 1fr));
+  gap: 6px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: 500 13px/1.4 var(--font-mono);
 }
 
 .related {
@@ -698,6 +783,20 @@ kbd {
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 6px 24px;
+}
+
+.footer-directory ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-directory [aria-current="page"] {
+  color: var(--text);
+  text-decoration-color: currentColor;
 }
 
 .footer-credit {
@@ -774,6 +873,10 @@ kbd {
 
   .phrase-translation {
     font-size: 20px;
+  }
+
+  .phrase-index {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

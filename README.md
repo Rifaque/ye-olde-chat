@@ -8,6 +8,7 @@ A phrasebook of gaming, Twitch, Discord and internet slang rendered into absurdl
 - **Popular** lists the phrases copied most often, worldwide.
 - **Find a Reply** takes something someone said and picks fitting replies from the phrasebook.
 - **Phrase pages** at `/p/<id>` (for example `/p/skill-issue`) are shareable and list kindred phrases.
+- **Category pages** at `/gaming`, `/twitch`, `/discord`, `/internet`, `/arguments`, `/praise` and `/afk-social` list every phrase in a category with links to each phrase page. Titles, descriptions, canonical URLs, breadcrumbs and structured data live in `src/lib/seo.ts`, which also builds `sitemap.xml` and `robots.txt`. Search, filters and Find a Reply never change the URL, so they create no extra indexable pages.
 
 There is no AI anywhere: every translation is hand-written, and all matching is deterministic ranking over the corpus metadata, run in the browser.
 
